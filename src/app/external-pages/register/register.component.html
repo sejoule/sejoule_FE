@@ -1,0 +1,85 @@
+<div class="portal-accent-bg portal-register-container" fxLayoutAlign="center center" fxLayoutAlign.lt-md="none">
+  <mat-card class="portal-register-card portal-horizontal-card mat-elevation-z"
+    fxFlex="100"
+    fxFlex.md="90"
+    fxFlex.gt-md="60"
+    fxLayout.lt-md="column">
+    <mat-card-content
+      fxFlex="auto"
+      fxFlex.gt-sm="50%"
+      fxLayout="column"
+      fxLayoutAlign="space-between none"
+      class="portal-primary-bg">
+      <div>
+        <mat-card-title fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+          <img class="portal-register-logo" src="assets/images/oxygenna.png"/>
+          <h1 i18n>Register</h1>
+        </mat-card-title>
+        <div>
+          <p i18n>{{ settings.register1 }}</p>
+          <p i18n>{{ settings.register2 }}</p>
+          <p i18n>{{ settings.register3 }}</p>
+        </div>
+      </div>
+      <button mat-button i18n type="button" color="accent" mat-raised-button (click)="login()">
+        I already have an account.
+      </button>
+    </mat-card-content>
+
+    <mat-card-content
+      fxFlex="auto"
+      fxFlex.gt-sm="50%"
+      fxLayout="column"
+      fxLayoutAlign="space-between none"
+      fxLayoutGap="16px">
+      <form [formGroup]="registerForm">
+        <div fxLayout="row" fxLayout.sm="column">
+          <mat-form-field class="portal-remove-fixed-infix-width portal-first-name">
+            <input matInput [formControl]="registerForm.controls['first_name']" placeholder="First Name">
+            <mat-error *ngIf="registerForm.controls['first_name'].hasError('required')">
+              first name is required.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="portal-remove-fixed-infix-width">
+            <input matInput [formControl]="registerForm.controls['last_name']" placeholder="Last Name">
+            <mat-error *ngIf="registerForm.controls['last_name'].hasError('required')">
+              last name is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <mat-form-field>
+          <input matInput [formControl]="registerForm.controls['username']" placeholder="Username">
+          <mat-error *ngIf="registerForm.controls['username'].hasError('required')">
+            username is required.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="password" [formControl]="registerForm.controls['password']" placeholder="Password">
+          <mat-error *ngIf="registerForm.controls['password'].hasError('required')">
+            blank passwords are not allowed.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="password" [formControl]="registerForm.controls['passwordConfirm']" placeholder="Repeat Your Password">
+          <mat-error *ngIf="registerForm.controls['passwordConfirm'].hasError('required')">
+            confirm your password.
+          </mat-error>
+          <div *ngIf="registerForm.hasError('mismatchedPasswords')">
+            Passwords do not match.
+          </div>
+        </mat-form-field>
+      </form>
+
+      <div fxLayout="column">
+        <button mat-raised-button i18n
+          type="button"
+          fxFlex="none"
+          color="primary"
+          (click)="register()"
+          [disabled]="!registerForm.valid">
+          Register
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

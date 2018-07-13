@@ -2,10 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { AppState, UserState } from '../../appstate/reducers';
-import * as userAction from '../../appstate/actions/userActions';
-import { Subscription } from 'rxjs';
-import { IUser } from '../../models/users/user';
+import { AppState } from '../../middleware/reducers';
+import * as userAction from '../../middleware/actions/userActions';
+import { pipe, Subscription } from 'rxjs';
+import { empty_user, IUser } from '../../models/users/user';
+import { map, switchMap, tap } from 'rxjs/internal/operators';
 
 @Component({
   selector: 'app-profile',
@@ -17,39 +18,35 @@ export class ProfileComponent implements OnInit, OnDestroy {
   passwordForm: FormGroup;
   notificationsForm: FormGroup;
   subscription: Subscription;
-  user: IUser;
+  user: IUser = empty_user;
 
   ngOnInit(): void {
     let id = this.getUsrId;
     let token = this.getUsrToken;
-    this.userStore.dispatch(new userAction.GetUserAction({
-      action: userAction.GETUSER,
-      id: id,
-      token: token,
-    }));
-    // this.subscription = this.userStore.select('userReducer').subscribe(
-    //   event => {
-    //     this.user = event['user'];
-    //     // this.populateForm();
-    //   }
-    // );
+
+    this.subscription = this.store.select('userReducer').subscribe(
+      response => {
+        this.populateForm(response['user']);
+      },
+      error => console.log(error)
+    );
   }
 
   constructor(
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
-    private appStore: Store<AppState>,
-    private userStore: Store<UserState>
-  ) { }
+    private store: Store<AppState>,
+    // private userStore: Store<UserState>
+  ) {  }
 
-  populateForm(): void {
+  populateForm(user: IUser): void {
     this.profileForm = this.fb.group({
-      firstname: [this.user.firstName, Validators.required],
-      lastname: [this.user.lastName, Validators.required],
-      email: [this.user.email, Validators.required],
+      firstname: [user.first_name, Validators.required],
+      lastname: [user.last_name, Validators.required],
+      email: [user.email, Validators.required],
       location: 'Sitia, Crete, Greece',
-      website: this.user.website,
-      describe: this.user.description
+      website: user.website,
+      describe: user.description
     });
 
     this.passwordForm = this.fb.group({
@@ -70,7 +67,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   get getUsrId(): number {
     let id = -1;
-    this.appStore.select('appReducer').subscribe(
+    this.store.select('appReducer').subscribe(
       event => id = event.authuser['id']
     );
     return id;
@@ -78,7 +75,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   get getUsrToken(): string {
     let token = '';
-    this.appStore.select('appReducer').subscribe(
+    this.store.select('appReducer').subscribe(
       event => token = event['token']
     );
     return token;
@@ -90,7 +87,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void{
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 

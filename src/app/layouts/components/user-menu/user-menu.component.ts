@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../../appstate/reducers';
-import * as appAction from '../../../appstate/actions/appActions';
+import { AppState } from '../../../middleware/reducers';
+import * as appAction from '../../../middleware/actions/appActions';
 import { empty_authuser, IAuthUser } from '../../../models/users/user';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import * as userAction from '../../../middleware/actions/userActions';
 
 @Component({
   selector: 'portal-user-menu',
@@ -16,7 +17,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     {
       title: 'My Profile',
       icon: 'account_circle',
-      click: () => { this. gotoMenu('/pages/profile'); }
+      click: () => { this.getUserProfile(); }
     },
     {
       title: 'Activity',
@@ -45,11 +46,12 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     }
   ];
   authuser: IAuthUser = empty_authuser;
-  subscription: Subscription
+  subscription: Subscription;
+  id: number;
+  token: string;
 
   constructor(
-    private store: Store<AppState>,
-    private router: Router
+    private store: Store<AppState>
   ) { }
 
   // subscribe the the reducer to get the changes to the application state
@@ -57,10 +59,18 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     this.subscription = this.store.select('appReducer').subscribe(
       (event) => this.authuser = event['authuser']
     );
+    this.store.select('appReducer').subscribe(event => this.id = event.authuser['id'] );
+    this.store.select('appReducer').subscribe(event => this.token = event['token'] );
   }
 
-  gotoMenu( route: string): void {
-    this.router.navigate([route] );
+  getUserProfile(): void {
+    this.store.dispatch(
+      new userAction.GetUserProfileAction({
+          action: userAction.GETUSERPROFILE,
+          id: this.id,
+          token: this.token,
+        }
+      ));
   }
 
   logout(): void {

@@ -2,14 +2,14 @@
 export interface IAuthUser {
   id:          number;
   username:    string;
-  firstName:   string;
-  lastName:    string;
+  first_name:   string;
+  last_name:    string;
 }
 
 export interface IUser {
   username: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   description: string;
   email: string;
   website: string;
@@ -20,14 +20,14 @@ export interface IUser {
 export const empty_authuser: IAuthUser = {
   id:          -1,
   username:    'Anonymous',
-  firstName:   'Anonymous',
-  lastName:    ''
+  first_name:   'Anonymous',
+  last_name:    ''
 };
 
 export const empty_user: IUser = {
   username: 'Anonymous',
-  firstName: 'Anonymous',
-  lastName: '',
+  first_name: 'Anonymous',
+  last_name: '',
   description: 'Unknown authuser account',
   email: 'unknown@onecloud.com',
   website: '',

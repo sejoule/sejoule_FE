@@ -1,4 +1,4 @@
-import { GETUSER, GETUSER_RESPONSE } from '../actions/userActions';
+import { GETUSER_RESPONSE } from '../actions/userActions';
 import { empty_user, IUser } from '../../models/users/user';
 
 export interface  UserReducerState {
@@ -16,7 +16,6 @@ export function userReducer( state: UserReducerState = initialState, action: any
         ...state,
         user: action.payload.user,
       };
-    default: return state;
   }
-  // return state;
+  return state;
 }

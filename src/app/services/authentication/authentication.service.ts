@@ -1,25 +1,26 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-// import { map } from 'rxjs/operators';
-import { Store, Action } from '@ngrx/store';
+import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs/observable';
-import * as appActions from '../../appstate/actions/appActions';
+import * as appActions from '../../middleware/actions/appActions';
 import { ReplaySubject } from 'rxjs';
-import { AppState } from '../../appstate/reducers';
 import { empty_authuser } from '../../models/users/user';
+import { SettingsService } from '../config/settings.service';
 
 @Injectable()
 export class AuthenticationService {
+
   constructor(
-    private http: HttpClient
-  ) { }
+    private http: HttpClient,
+    private settings: SettingsService
+  ) {  }
 
   public logInOutResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
 
   loginUser(username: string, password: string): Observable<Action> {
-    // this.http.post<any>('/api/authenticate/login', {username: username, password: password})
-    this.http.post<any>('http://13.209.45.228:8000/api-token-user_auth/', {username: username, password: password})
+    const endpoint = this.settings.getSettings().api_endpoint;
+    this.http.post<any>(endpoint + '/api-token-user_auth/', {username: username, password: password})
       .subscribe(
         (response) => {
           if (response.token) {
@@ -35,7 +36,8 @@ export class AuthenticationService {
   }
 
   logOutUser(username: string): Observable<Action> {
-    this.http.post<any>('/api/authenticate/logout', {username: username})
+    const endpoint = this.settings.getSettings().api_endpoint;
+    this.http.post<any>(endpoint + '/api/authenticate/logout', {username: username})
       .subscribe(
         (response) => {
           if (response.username) {

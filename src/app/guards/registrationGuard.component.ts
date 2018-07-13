@@ -13,7 +13,7 @@ export class RegGuard implements CanActivate {
     // }
 
     // not logged in so redirect to login page with the return url
-    // this.router.navigate(['/login'], { queryParams: { returnUrl: appstate.url }});
+    // this.router.navigate(['/login'], { queryParams: { returnUrl: middleware.url }});
     // return false;
   }
 }

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AppConfig } from '../../services/config/app-config.service';
-import { AuthenticationService } from '../../services/authentication/authentication.service';
+import { SettingsService } from '../../services/config/settings.service';
 import { AlertService } from '../../services/alerts/alert.service';
-import * as appAction from '../../appstate/actions/appActions';
+import * as appAction from '../../middleware/actions/appActions';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../appstate/reducers';
+import { AppState } from '../../middleware/reducers';
 
 
 @Component({
@@ -16,17 +15,23 @@ import { AppState } from '../../appstate/reducers';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  settings: {};
+  application_name:  any;
+  welcome1:  '';
+  welcome2:  '';
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private alertService: AlertService,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private settings: SettingsService
   ) { }
 
   ngOnInit(): void {
-    this.settings = AppConfig.settings.login;
+    this.application_name = this.settings.getSettings().application_name;
+    this.welcome1 = this.settings.getAppText().welcome1;
+    this.welcome2 = this.settings.getAppText().welcome2;
+
     this.loginForm = this.formBuilder.group({
       'username': ['', Validators.required],
       'password': ['', Validators.required]

@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AppConfig } from '../../services/config/app-config.service';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { AlertService } from '../../services/alerts/alert.service';
 
 import { UserService } from '../../services/users/user.service';
-import { ALERT } from '../../appstate/actions/appActions';
-import { AppState } from '../../appstate/reducers';
+import { ALERT } from '../../middleware/actions/appActions';
+import { AppState } from '../../middleware/reducers';
 import { Store } from '@ngrx/store';
+import { SettingsService } from '../../services/config/settings.service';
 
 @Component({
   selector: 'portal-register',
@@ -17,7 +17,9 @@ import { Store } from '@ngrx/store';
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
-  settings: {};
+  register1: '';
+  register2: '';
+  register3: '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -25,8 +27,11 @@ export class RegisterComponent implements OnInit {
     private authenticator: AuthenticationService,
     private alertService: AlertService,
     private user: UserService,
-    private store: Store<AppState>
-  ) {
+    private store: Store<AppState>,
+    private settings: SettingsService
+  ) {  }
+
+  ngOnInit(): void {
     // const emailRegex = '^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$';
     const formOptions = {
       'first_name': ['', Validators.required],
@@ -36,14 +41,13 @@ export class RegisterComponent implements OnInit {
       'passwordConfirm': ['', Validators.required]
     };
 
-    this.settings = AppConfig.settings.register;
+    this.register1 = this.settings.getAppText().registration1;
+    this.register2 = this.settings.getAppText().registration2;
+    this.register3 = this.settings.getAppText().registration3;
 
     this.registerForm = this.formBuilder.group(formOptions, {
       validator: this.matchingPasswordsValidator('password', 'passwordConfirm')
     });
-  }
-
-  ngOnInit(): void {
   }
 
   register(): void {

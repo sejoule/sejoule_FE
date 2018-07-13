@@ -13,7 +13,7 @@ const initialState: AppReducerState = {
   token: ''
 };
 
-export function reducer( state: AppReducerState = initialState, action: any ): AppReducerState {
+export function appReducer( state: AppReducerState = initialState, action: any ): AppReducerState {
   switch (action.type) {
     case LOGIN_RESPONSE:
       return {

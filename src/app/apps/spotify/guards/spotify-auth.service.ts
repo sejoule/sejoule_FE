@@ -15,8 +15,8 @@ export class SpotifyAuthService implements CanActivate {
           '?client_id=' + encodeURIComponent('1c67722af0494cf2b00336bd6fb4c019') +
           '&response_type=' + encodeURIComponent('token') +
           '&redirect_uri=' + encodeURIComponent('https://portal.oxygenna.com/angular/apps/spotify') +
-          '&scope=' + encodeURIComponent('users-read-playback-appstate users-modify-playback-appstate') +
-          '&appstate=' + encodeURIComponent('12345')
+          '&scope=' + encodeURIComponent('users-read-playback-middleware users-modify-playback-middleware') +
+          '&middleware=' + encodeURIComponent('12345')
         );
         return false;
       } else {

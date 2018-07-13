@@ -8,20 +8,20 @@ import { LayoutsModule } from './layouts/layouts.module';
 
 import { AppComponent } from './app.component';
 import { APP_INITIALIZER } from '@angular/core';
-import { AppConfig } from './services/config/app-config.service';
+import { SettingsService } from './services/config/settings.service';
 
 import 'hammerjs';
 import { AuthenticationService } from './services/authentication/authentication.service';
 import { AlertService } from './services/alerts/alert.service';
 import { UserService } from './services/users/user.service';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
-import { reducers, userReducers } from './appstate/reducers';
+import { reducers } from './middleware/reducers';
 import { AuthenticationGuard } from './guards/authenticationGuard.component';
 import { EffectsModule } from '@ngrx/effects';
-import { AppEffects } from './appstate/effects/appEffects';
+import { AppEffects } from './middleware/effects/appEffects';
+import { UserEffects } from './middleware/effects/userEffects';
 
-export function initializeApp(appConfigService: AppConfig) {
+export function initializeApp(appConfigService: SettingsService): any {
   return () => appConfigService.load();
 }
 
@@ -30,19 +30,18 @@ export function initializeApp(appConfigService: AppConfig) {
     AppComponent
   ],
   imports: [
-    StoreModule.forRoot(reducers, {}), EffectsModule.forRoot([AppEffects]),
+    StoreModule.forRoot(reducers, {}), EffectsModule.forRoot([AppEffects, UserEffects]),
     BrowserModule,
     BrowserAnimationsModule,
     LayoutsModule,
     AppRoutingModule,
   ],
   providers: [
-    AuthenticationService, AuthenticationGuard, AlertService, UserService,
-    AppConfig,
+    SettingsService,
     { provide: APP_INITIALIZER,
       useFactory: initializeApp,
-      deps: [AppConfig], multi: true
-    },
+      deps: [SettingsService], multi: true
+    }, AuthenticationService, AuthenticationGuard, AlertService, UserService
   ],
   bootstrap: [
     AppComponent

@@ -1,12 +1,5 @@
 {
-  "login":{
-    "name": "CloudOne",
-    "welcome1": "Welcome to our admin panel. Please login using the form or register for a new account using the button below.",
-    "welcome2": "Portal is an amazing and easy to use Admin template. If you have any questions feel free to contact us in our support forum."
-  },
-  "register":{
-    "register1": "It takes a couple of minutes to sign up for a free account.",
-    "register2": "Just fill in your details to gain access the admin panel and view the dashboard.",
-    "register3": "By creating an account, you agree to our Terms & Conditions and Privacy Policy."
-  }
+  "application_name": "CloudOne",
+  "api_endpoint": "http://kena.sejoule.com",
+  "lang": "en"
 }

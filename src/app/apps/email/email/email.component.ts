@@ -62,7 +62,7 @@ export class EmailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Get initial appstate of the sidenav.
+    // Get initial middleware of the sidenav.
     this.calculateMessageDrawerStatus();
 
     // Subscribe to changes in screen size to change sidenav behavior.

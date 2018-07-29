@@ -20,9 +20,9 @@ export class MenuSidenavComponent implements OnDestroy {
       link: '/home'
     },
     {
-      title: 'Applications',
+      title: 'Upload',
       icon: 'apps',
-      link: '/applications'
+      link: '/pages/upload'
     },
     {
       title: 'Providers',

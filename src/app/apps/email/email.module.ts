@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { QuillEditorModule } from 'ngx-quill-editor';
 
-import { SharedModule } from './../../shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 
 import { EmailComponent } from './email/email.component';
 import { EmailListComponent } from './list/list.component';

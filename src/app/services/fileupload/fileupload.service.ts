@@ -2,7 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs/observable';
+import { Observable } from 'rxjs';
 import * as fileActions from '../../middleware/actions/fileActions';
 import { ReplaySubject } from 'rxjs';
 import { empty_authuser } from '../../models/users/user';

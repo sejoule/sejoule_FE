@@ -1,8 +1,8 @@
-import { Thread } from './../models/thread';
-import { Message } from './../models/message';
-import { ComposeDialogComponent } from './../compose-dialog/compose-dialog.component';
+import { Thread } from '../models/thread';
+import { Message } from '../models/message';
+import { ComposeDialogComponent } from '../compose-dialog/compose-dialog.component';
 import { Subscription } from 'rxjs';
-import { EmailService } from './../email.service';
+import { EmailService } from '../email.service';
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ObservableMedia, MediaChange } from '@angular/flex-layout';
 import { MatDrawer, MatDialog, MatSnackBar } from '@angular/material';

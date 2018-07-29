@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/observable';
+import { Observable } from 'rxjs';
 import { ReplaySubject } from 'rxjs';
 import { Action } from '@ngrx/store';
 import { SettingsService } from '../config/settings.service';

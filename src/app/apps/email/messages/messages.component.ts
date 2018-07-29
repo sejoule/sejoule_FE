@@ -1,16 +1,16 @@
-import { DeleteDialogComponent } from './../delete-dialog/delete-dialog.component';
+import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Component } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { Thread } from './../models/thread';
-import { Message } from './../models/message';
+import { Thread } from '../models/thread';
+import { Message } from '../models/message';
 
-import { EmailService } from './../email.service';
+import { EmailService } from '../email.service';
 
-import { ComposeDialogComponent } from './../compose-dialog/compose-dialog.component';
+import { ComposeDialogComponent } from '../compose-dialog/compose-dialog.component';
 
 @Component({
   selector: 'app-messages',

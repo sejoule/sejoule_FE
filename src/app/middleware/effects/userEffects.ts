@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Action } from '@ngrx/store';
 import { Effect, Actions } from '@ngrx/effects';
-import { Observable } from 'rxjs/observable';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { first, switchMap, take } from 'rxjs/internal/operators';
 import * as userActions from '../actions/userActions';

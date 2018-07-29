@@ -3,8 +3,8 @@ import { Component } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { Thread } from './../models/thread';
-import { EmailService } from './../email.service';
+import { Thread } from '../models/thread';
+import { EmailService } from '../email.service';
 
 @Component({
   selector: 'app-list',

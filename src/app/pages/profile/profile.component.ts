@@ -3,10 +3,9 @@ import { MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../middleware/reducers';
-import * as userAction from '../../middleware/actions/userActions';
 import { pipe, Subscription } from 'rxjs';
 import { empty_user, IUser } from '../../models/users/user';
-import { map, switchMap, tap } from 'rxjs/internal/operators';
+
 
 @Component({
   selector: 'app-profile',
@@ -21,9 +20,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   user: IUser = empty_user;
 
   ngOnInit(): void {
-    let id = this.getUsrId;
-    let token = this.getUsrToken;
-
     this.subscription = this.store.select('userReducer').subscribe(
       response => {
         this.populateForm(response['user']);

@@ -20,6 +20,8 @@ import { AuthenticationGuard } from './guards/authenticationGuard.component';
 import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './middleware/effects/appEffects';
 import { UserEffects } from './middleware/effects/userEffects';
+import { FileUploadEffects } from './middleware/effects/fileUploadEffects';
+import { FileuploadService } from './services/fileupload/fileupload.service';
 
 export function initializeApp(appConfigService: SettingsService): any {
   return () => appConfigService.load();
@@ -30,7 +32,8 @@ export function initializeApp(appConfigService: SettingsService): any {
     AppComponent
   ],
   imports: [
-    StoreModule.forRoot(reducers, {}), EffectsModule.forRoot([AppEffects, UserEffects]),
+    StoreModule.forRoot(reducers, {}),
+    EffectsModule.forRoot([AppEffects, UserEffects, FileUploadEffects]),
     BrowserModule,
     BrowserAnimationsModule,
     LayoutsModule,
@@ -41,7 +44,7 @@ export function initializeApp(appConfigService: SettingsService): any {
     { provide: APP_INITIALIZER,
       useFactory: initializeApp,
       deps: [SettingsService], multi: true
-    }, AuthenticationService, AuthenticationGuard, AlertService, UserService
+    }, AuthenticationService, AuthenticationGuard, AlertService, UserService, FileuploadService
   ],
   bootstrap: [
     AppComponent

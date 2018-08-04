@@ -1,12 +1,13 @@
 import { appReducer, AppReducerState } from './appReducer';
 import { userReducer, UserReducerState } from './userReducer';
 import { ActionReducerMap } from '@ngrx/store';
-import { FileReducerState, fileReducer } from './fileReducer'; // notice
+import { FileReducerState, FileProgressState, fileReducer, fileProgressReducer } from './fileReducer'; // notice
 
 export interface AppState {
   appReducer: AppReducerState;
   userReducer: UserReducerState;
   fileReducer: FileReducerState;
+  fileProgressReducer: FileProgressState;
 }
 
 // export interface UserState {
@@ -16,7 +17,8 @@ export interface AppState {
 export const reducers: ActionReducerMap<AppState> = {
   appReducer: appReducer,
   userReducer: userReducer,
-  fileReducer: fileReducer
+  fileReducer: fileReducer,
+  fileProgressReducer: fileProgressReducer
 };
 
 // export const userReducers: ActionReducerMap<UserState> = {

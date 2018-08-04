@@ -40,7 +40,7 @@ export class UserEffects {
             }
             // should log the action here
             // the reducer should get this and modify the state
-            new userActions.GetUserResponse({success: true, user: empty_user });
+            // new userActions.GetUserResponse({success: true, user: empty_user });
           } )
         );
       return getUserResp;

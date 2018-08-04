@@ -37,11 +37,9 @@ export class AlertAction implements Action {
   constructor(public payload: {message: string}) {}
 }
 
-export type APP_ACTIONS =
-  | LoginAction
-  | LoginResponse
-  | AlertAction;
-
 export type LOGINOUT_ACTIONS =
   | LoginAction
   | LogoutAction;
+
+export type ALERT_ACTIONS =
+  | AlertAction;

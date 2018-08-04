@@ -1,0 +1,85 @@
+.portal-fileupload-container {
+  min-height: 100%;
+  overflow: auto;
+}
+
+.portal-fileupload__header {
+  transform: translateY(80px);
+  opacity: 0;
+  animation: portal-profile 1s forwards 1;
+  animation-delay: .5s;
+}
+
+.portal-fileupload__header-content {
+  width: 100%;
+  padding: 40px 0px 24px;
+  @media (max-width: 600px) {
+    padding-top: 24px;
+  }
+}
+
+.portal-fileupload__content {
+  padding-bottom: 48px;
+  opacity: 0;
+  transform: translateY(80px);
+  animation: portal-fileUpload 1s forwards 1;
+  animation-delay: .8s;
+  .mat-card {
+    padding: 0;
+    box-shadow: 0 11px 15px -7px rgba(0,0,0,.2), 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12);
+  }
+  .mat-form-field {
+    width: 100%;
+  }
+  .mat-card-actions {
+    padding: 36px;
+  }
+  .mat-icon {
+    font-size: 16px;
+    line-height: 24px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .toggle-container {
+    padding-bottom: 24px;
+  }
+  a {
+    cursor: pointer;
+    font-style: italic;
+    margin: auto;
+    margin-bottom: 20px;
+  }
+  .portal-fileupload__uploader{
+    height: 250px;
+  }
+  .portal-fileupload__editor{
+    height: 800px;
+  }
+  textarea {
+    border: none;
+    width: 100%;
+    height: 100%;
+  }
+  .portal-fileupload-filelist{
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  //mat-card-content {
+  //  min-height: 350px;
+  //  padding: 0px;
+  //  margin: 0;
+  //
+  //}
+}
+
+// Demo animations
+@keyframes portal-fileUpload {
+  0% {
+    transform: translateY(80px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

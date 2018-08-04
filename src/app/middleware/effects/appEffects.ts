@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Action } from '@ngrx/store';
 import { Effect, Actions } from '@ngrx/effects';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { first, tap } from 'rxjs/operators';
 import { AlertService } from '../../services/alerts/alert.service';
 import { switchMap, take } from 'rxjs/internal/operators';
 import * as appActions from '../actions/appActions';
@@ -35,14 +35,11 @@ export class AppEffects {
               .pipe(
                 tap((response: appActions.LoginResponse) => {
                   if (response.payload.success) {
-                    // todo new appActions.AlertAction({message: 'Successfully logged in.'});
                     this.router.navigate(['home']);
+                    this.alertService.alert('Login Successful. Welcome ' + response.payload.authuser.username);
                   } else {
-                    // todo new appActions.AlertAction({message: 'Unable to login.'});
+                    this.alertService.alert('Login Unsuccessful. Please check your username and password.');
                   }
-                  // should log the action here
-                  // the reducer should get this and modify the state
-                  new appActions.LoginResponse({success: true, authuser: empty_authuser , token: ''});
                 } )
               );
             return logInOutResp;
@@ -57,9 +54,6 @@ export class AppEffects {
                   } else {
                     // todo new appActions.AlertAction({message: 'Unable to logout.'});
                   }
-                  // should log the action here
-                  // the reducer should get this and modify the state
-                  new appActions.LogOutResponse({success: true, authuser: ''});
                 } )
               );
             return logInOutResp;
@@ -70,8 +64,9 @@ export class AppEffects {
 
   @Effect()
   alert$: Observable<Action> = this.action$
-    .ofType<appActions.AlertAction>(appActions.ALERT)
+    .ofType<appActions.ALERT_ACTIONS>(appActions.ALERT)
     .pipe(
+      first(),
       tap((alert: appActions.AlertAction) => {
         this.alertService.alert(alert.payload.message);
       })

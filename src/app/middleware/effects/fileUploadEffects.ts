@@ -1,24 +1,23 @@
 import { Injectable } from '@angular/core';
 
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { Effect, Actions } from '@ngrx/effects';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { first, switchMap, take } from 'rxjs/internal/operators';
 import * as fileActions from '../actions/fileActions';
-import { empty_user } from '../../models/users/user';
-import { UserService } from '../../services/users/user.service';
-import { Router } from '@angular/router';
+import * as appActions from '../actions/appActions';
 import { FileuploadService } from '../../services/fileupload/fileupload.service';
+import { AppState } from '../reducers';
 
 
 
 @Injectable()
 export class FileUploadEffects {
   constructor(
+    private store: Store<AppState>,
     private action$: Actions,
-    private fileService: FileuploadService,
-    private router: Router
+    private fileService: FileuploadService
   ) { }
 
   // This should be an effect so that the state can be persisted
@@ -31,17 +30,13 @@ export class FileUploadEffects {
         uploadResp = this.fileService.uploadFile(action.payload.file, action.payload.token)
           .pipe(
             first(),
-            tap((response: fileActions.FileResponse) => {
+            tap((response: fileActions.UploadfileResponse) => {
               if (response.payload.success) {
-                // todo persist the authuser
-                // this.router.navigate(['/pages/profile']);
+                this.store.dispatch(new appActions.AlertAction({message: 'Successfully uploaded file'}));
               } else {
-                // todo send a notification or log an error
-                console.log('error getting user profile');
+                this.store.dispatch(new appActions.AlertAction({message: 'File upload failed for '}));
+                console.log('Error uploading file');
               }
-              // should log the action here
-              // the reducer should get this and modify the state
-              new fileActions.FileResponse({success: true, filename: '' });
             } )
           );
         return uploadResp;

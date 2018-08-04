@@ -1,11 +1,9 @@
-import { Injectable, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 
 import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import * as fileActions from '../../middleware/actions/fileActions';
-import { ReplaySubject } from 'rxjs';
-import { empty_authuser } from '../../models/users/user';
 import { SettingsService } from '../config/settings.service';
 
 @Injectable()
@@ -16,23 +14,41 @@ export class FileuploadService {
     private settings: SettingsService
   ) {  }
 
-  public logInOutResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
-
   uploadFile(file: any, token: string): Observable<Action> {
     const endpoint = this.settings.getSettings().api_endpoint;
-    this.http.post<any>(endpoint + '/tosca/upload', file, {params: {['token']: token}})
+    const fileuploadResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
+    this.http.post<any>(endpoint + '/tosca/upload', file, {headers: {['Authorization']: 'JWT ' + token}})
       .subscribe(
         (response) => {
           if (response) {
-            this.logInOutResponse.next(new fileActions.FileResponse({success: true, filename: ''}));
+            fileuploadResponse.next(new fileActions.UploadfileResponse({success: true, filename: response}));
           } else {
-            this.logInOutResponse.next(new fileActions.FileResponse({success: false, filename: ''}));
+            fileuploadResponse.next(new fileActions.UploadfileResponse({success: false, filename: ''}));
           }
         },
         () => {
-          this.logInOutResponse.next(new fileActions.FileResponse({success: false, filename: ''}));
+          fileuploadResponse.next(new fileActions.UploadfileResponse({success: false, filename: ''}));
         });
-    return this.logInOutResponse;
+    return fileuploadResponse;
+  }
+
+  uploadFileWithProgess(file: any, token: string): Observable<Action> {
+    const endpoint = this.settings.getSettings().api_endpoint;
+    const fileuploadSubject = new Subject<Action>();
+    this.http.post<any>(endpoint + '/tosca/upload', file, {headers: {['Authorization']: 'JWT ' + token}, reportProgress: true})
+      .subscribe(
+        (progress) => {
+          if (progress.type === HttpEventType.UploadProgress) {
+            const percentDone = Math.round(100 * progress.loaded / progress.total);
+            fileuploadSubject.next(new fileActions.UploadfileProgress({filename: file, percent_upload: percentDone}));
+          } else if (progress instanceof Response) {
+            fileuploadSubject.complete();
+          }
+        },
+        () => {
+          fileuploadSubject.next(new fileActions.UploadfileProgress({filename: file, percent_upload: 0}));
+        });
+    return fileuploadSubject;
   }
 
 }

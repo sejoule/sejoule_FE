@@ -1,10 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { FileReducerState } from '../../middleware/reducers/fileReducer';
 import { AppState } from '../../middleware/reducers';
 import * as fileAction from '../../middleware/actions/fileActions';
-import { FormGroup, FormBuilder, Validators} from '@angular/forms';
-// import * as userAction from '../../middleware/actions/userActions';
 
 
 @Component({
@@ -13,27 +10,38 @@ import { FormGroup, FormBuilder, Validators} from '@angular/forms';
   styleUrls: ['./upload.component.scss']
 })
 export class UploadComponent implements OnInit {
-  uploadForm: FormGroup;
-
+  @ViewChild('file') fileElement: any;
+  files: Set<File> = new Set();
 
   constructor(
-    private store : Store<AppState>,
-    private formBuilder : FormBuilder
+    private store: Store<AppState>,
   ) { }
 
-  ngOnInit() { 
-    this.uploadForm = this.formBuilder.group({
-      'fileName' : ['', Validators.required]
-    });
+  ngOnInit(): void {}
+
+  addFileDialog(): void {
+    this.fileElement.nativeElement.click();
+  }
+
+  filesAdded(): void {
+    const files: { [key: string]: File } = this.fileElement.nativeElement.files;
+    for (const key in files) {
+      if (!isNaN(parseInt(key, 10))) {
+        this.files.add(files[key]);
+      }
+    }
   }
 
   upload(): void {
-
-    this.store.dispatch( new fileAction.UploadfileAction({
-          action: fileAction.UPLOADFILE,
-          file : {},
-          token: this.getUsrToken
-        }));
+    this.files.forEach( (file_to_upload) => {
+      const formData = new FormData();
+      formData.append('file', file_to_upload, file_to_upload.name);
+      this.store.dispatch(new fileAction.UploadfileAction({
+        action: fileAction.UPLOADFILE,
+        file: formData,
+        token: this.getUsrToken
+      }));
+    });
   }
 
   get getUsrToken(): string {

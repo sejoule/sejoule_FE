@@ -38,7 +38,7 @@ export class FileUploadEffects {
               )
             );
           return uploadResp;
-        }else {
+        } else {
           let uploadResp: Observable<Action>;
           uploadResp = this.fileService.uploadFile(action.payload.files, action.payload.token)
             .pipe(
@@ -54,6 +54,30 @@ export class FileUploadEffects {
       }),
     );
 
+  @Effect()
+  uploadYaml$: Observable<Action> = this.action$
+    .ofType<fileActions.FILE_ACTIONS>(fileActions.UPLOADYAML)
+    .pipe(
+      switchMap((action: fileActions.UploadyamlAction) => {
+        let uploadResp: Observable<Action>;
+        uploadResp = this.fileService.uploadYaml(action.payload.yaml, action.payload.token)
+          .pipe(
+            tap((response: fileActions.UploadyamlResponse) => {
+                if (response.payload.done) {
+                  this.store.dispatch(new appActions.AlertAction({
+                    message: 'Template ' + response.payload.name + ' uploaded.'
+                  }));
+                } else {
+                  this.store.dispatch(new appActions.AlertAction({
+                    message: 'Failed to upload template.'
+                  }));
+                }
+              }
+            )
+          );
+        return uploadResp;
+      }),
+    );
 
 }
 

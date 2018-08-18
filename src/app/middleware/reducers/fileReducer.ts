@@ -9,10 +9,19 @@ export interface  FileUpload {
 }
 
 export interface FileProgress {
-    filename: string;
-    percent_upload: number;
-    done: boolean;
-    saved_filename: string;
+  filename: string;
+  percent_upload: number;
+  done: boolean;
+  saved_filename: string;
+}
+
+export interface YamlUpload {
+  name: string;
+  done: boolean;
+}
+
+export interface YamlUploadState {
+  YamlUpload: YamlUpload;
 }
 
 export interface FileUploadState {
@@ -23,6 +32,12 @@ export interface  FileProgressState {
   fileProgresses: FileProgress[];
 }
 
+const initialYamlUploadState: YamlUploadState = {
+  YamlUpload: {
+    name: '',
+    done: false,
+  }
+};
 
 const initialUploadState: FileUploadState = {
   fileUploads: []

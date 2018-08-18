@@ -14,6 +14,25 @@ export class FileuploadService {
     private settings: SettingsService
   ) {  }
 
+  uploadYaml(yaml: string, token: string): Observable<Action> {
+    const endpoint = this.settings.getSettings().api_endpoint;
+    const yamluploadResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
+    this.http.post(endpoint + '/tosca/service_templates/', yaml, {headers: {['Authorization']: 'JWT ' + token, 'Content-type': 'application/yaml'}, observe: 'response', responseType: 'text'})
+      .subscribe(
+        (response) => {
+          if (response.status === 201) {
+            yamluploadResponse.next(new fileActions.UploadyamlResponse({ name: response.body, done: true}));
+          } else {
+            yamluploadResponse.next(new fileActions.UploadyamlResponse({ name: '', done: false}));
+          }
+        },
+        (error) => {
+          yamluploadResponse.next(new fileActions.UploadyamlResponse({ name: '', done: false}));
+        }
+      );
+    return yamluploadResponse;
+  }
+
   uploadFile(files: Set<File>, token: string): Observable<Action> {
     const endpoint = this.settings.getSettings().api_endpoint;
     const fileuploadResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);

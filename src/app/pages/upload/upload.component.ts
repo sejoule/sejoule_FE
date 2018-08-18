@@ -74,13 +74,12 @@ export class UploadComponent implements OnInit {
 
   uploadYml(): void {
     // TODO: need to change this to POST the body as text to the url http://kena.sejoule.com/tosca/service_templates/
-    // const yaml_to_upload: File = new File(this.yamlForm.controls.yaml.value, 'yaml_upload');
-    // this.store.dispatch(new fileAction.UploadfilesAction({
-    //   action: fileAction.UPLOADFILES,
-    //   files: new Set().add(yaml_to_upload),
-    //   token: this.getUsrToken,
-    //   with_progress: false
-    // }));
+    const yaml_to_upload: string = this.yamlForm.controls.yaml.value;
+    this.store.dispatch(new fileAction.UploadyamlAction({
+      action: fileAction.UPLOADYAML,
+      yaml: yaml_to_upload,
+      token: this.getUsrToken
+    }));
   }
 
   upload(with_progress: boolean): void {

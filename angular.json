@@ -23,7 +23,6 @@
             ],
             "styles": [
               "src/styles.scss",
-              "./node_modules/codemirror/theme/neat.css",
               {
                 "input": "src/theme-classic-green-deep_orange.scss",
                 "lazy": true
@@ -59,8 +58,7 @@
             ],
             "scripts": [
               "node_modules/highlight.js/lib/highlight.js",
-              "node_modules/chart.js/dist/Chart.js",
-              "node_modules/codemirror/mode/yaml/yaml.js"
+              "node_modules/chart.js/dist/Chart.js"
             ]
           },
           "configurations": {

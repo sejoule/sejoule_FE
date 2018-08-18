@@ -23,26 +23,36 @@ export class FileUploadEffects {
   // This should be an effect so that the state can be persisted
   @Effect()
   uploadFile$: Observable<Action> = this.action$
-    .ofType<fileActions.FILE_ACTIONS>(fileActions.UPLOADFILE)
+    .ofType<fileActions.FILE_ACTIONS>(fileActions.UPLOADFILES)
     .pipe(
-      switchMap((action: fileActions.UploadfileAction) => {
-        let uploadResp: Observable<Action>;
-        uploadResp = this.fileService.uploadFile(action.payload.file, action.payload.token)
-          .pipe(
-            first(),
-            tap((response: fileActions.UploadfileResponse) => {
-              if (response.payload.success) {
-                this.store.dispatch(new appActions.AlertAction({message: 'Successfully uploaded file'}));
-              } else {
-                this.store.dispatch(new appActions.AlertAction({message: 'File upload failed for '}));
-                console.log('Error uploading file');
+      switchMap((action: fileActions.UploadfilesAction) => {
+        if ( action.payload.with_progress === true) {
+          let uploadResp: Observable<Action>;
+          uploadResp = this.fileService.uploadFileWithProgess(action.payload.files, action.payload.token)
+            .pipe(
+              tap((response: fileActions.UploadfilesProgress) => {
+                  this.store.dispatch(new appActions.AlertAction({
+                    message: 'Upload completed. ' + response.payload.length + ' files uploaded.'
+                  }));
               }
-            } )
-          );
-        return uploadResp;
+              )
+            );
+          return uploadResp;
+        }else {
+          let uploadResp: Observable<Action>;
+          uploadResp = this.fileService.uploadFile(action.payload.files, action.payload.token)
+            .pipe(
+              first(),
+              tap((response: fileActions.UploadfilesResponse) => {
+                this.store.dispatch(new appActions.AlertAction({
+                  message: 'Upload completed. ' + response.payload.length + ' files uploaded.'
+                }));
+              })
+            );
+          return uploadResp;
+        }
       }),
     );
-
 
 
 }

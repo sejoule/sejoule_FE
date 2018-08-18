@@ -10,7 +10,7 @@ export class AlertService {
   ) {}
 
   alert(message: string): void {
-    this.snackBar.open(message, '', { duration: 5000 });
+    this.snackBar.open(message, '', { duration: 3000 });
   }
 
 }

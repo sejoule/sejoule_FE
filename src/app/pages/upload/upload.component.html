@@ -21,10 +21,8 @@
                     <mat-list class="portal-fileupload-filelist" fxFlex>
                       <mat-list-item *ngFor="let file of files ">
                         <mat-icon>attach_file</mat-icon>
-                        <h3 matLine>File name</h3>
-                        <p matLine>
-                          file content
-                        </p>
+                        <h3 matLine>Filename: {{file.name}}</h3>
+                        <mat-progress-bar mode="determinate" color="primary" [value]="progress[file.name]"></mat-progress-bar>
                       </mat-list-item>
                     </mat-list>
                   </div>
@@ -32,7 +30,7 @@
                 <div fxLayout="column" fxLayoutGap="16px">
                   <a mat-raised-button i18n
                      color="primary"
-                     (click)="upload()">
+                     (click)="upload(true)">
                     Upload
                   </a>
                 </div>
@@ -44,11 +42,30 @@
               </ng-template>
               <div class="portal-profile-container__content-tab">
                 <div class="portal-fileupload__editor">
-                  <!--<form>-->
-                  <!--<mat-form-field>-->
-                    <textarea class="ng-valid ng-touched" placeholder="Compose Tosca template"></textarea>
-                  <!--</mat-form-field>-->
-                  <!--</form>-->
+                  <form [formGroup]="yamlForm" fxLayout="column" fxLayoutGap="16px">
+                  <mat-form-field>
+                    <mat-codemirror
+                      formControlName="yaml"
+                      required
+                      [options]="{
+                        theme: 'eclipse',
+                        mode: 'yaml',
+                        indentUnit: 2,
+                        tabSize: 2,
+                        allowDropFileTypes: ['yml', 'yaml']
+                      }"
+                      placeholder="Enter YAML">
+                    </mat-codemirror>
+                    <mat-hint>YAML template</mat-hint>
+                  </mat-form-field>
+                  </form>
+                </div>
+                <div fxLayout="column" fxLayoutGap="16px">
+                  <a mat-raised-button i18n
+                     color="primary"
+                     (click)="uploadYml()">
+                    Upload
+                  </a>
                 </div>
               </div>
             </mat-tab>

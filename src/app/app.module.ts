@@ -37,7 +37,7 @@ export function initializeApp(appConfigService: SettingsService): any {
     BrowserModule,
     BrowserAnimationsModule,
     LayoutsModule,
-    AppRoutingModule,
+    AppRoutingModule
   ],
   providers: [
     SettingsService,

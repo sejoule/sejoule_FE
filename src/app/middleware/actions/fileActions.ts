@@ -1,29 +1,30 @@
 import { Action } from '@ngrx/store';
+import { FileProgress, FileUpload } from '../reducers/fileReducer';
 
 // Effects
-export const UPLOADFILE = 'UPLOADFILE';
-export const FILE_RESPONSE = 'FILE_RESPONSE';
-export const FILE_PROGRESS = 'FILE_PROGRESS';
+export const UPLOADFILES = 'UPLOADFILES';
+export const UPLOADFILES_RESPONSE = 'UPLOADFILES_RESPONSE';
+export const UPLOADFILES_PROGRESS = 'UPLOADFILES_PROGRESS';
 
 
-export class UploadfileAction implements Action {
-  readonly type: any = UPLOADFILE;
-  constructor(public payload: {action: string, file: any, token: string}) {}
+export class UploadfilesAction implements Action {
+  readonly type: any = UPLOADFILES;
+  constructor(public payload: {action: string, files: Set<File>, token: string , with_progress: boolean}) {}
 }
 
-export class UploadfileResponse implements Action {
-  readonly type: any = FILE_RESPONSE;
-  constructor(public payload: {success: boolean, filename: string}) {}
+export class UploadfilesResponse implements Action {
+  readonly type: any = UPLOADFILES_RESPONSE;
+  constructor(public payload: FileUpload[]) {}
 }
 
-export class UploadfileProgress implements Action {
-  readonly type: any = FILE_PROGRESS;
-  constructor(public payload: {filename: string, percent_upload: number}) {}
+export class UploadfilesProgress implements Action {
+  readonly type: any = UPLOADFILES_PROGRESS;
+  constructor(public payload: FileProgress[]) {}
 }
 
 
 export type FILE_ACTIONS =
-  | UploadfileAction
-  | UploadfileResponse
-  | UploadfileProgress;
+  | UploadfilesAction
+  | UploadfilesResponse
+  | UploadfilesProgress;
 

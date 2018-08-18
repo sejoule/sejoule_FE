@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEventType } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpHeaderResponse } from '@angular/common/http';
 
 import { Action } from '@ngrx/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
@@ -14,44 +14,92 @@ export class FileuploadService {
     private settings: SettingsService
   ) {  }
 
-  uploadFile(file: any, token: string): Observable<Action> {
+  uploadFile(files: Set<File>, token: string): Observable<Action> {
     const endpoint = this.settings.getSettings().api_endpoint;
     const fileuploadResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
-    this.http.post<any>(endpoint + '/tosca/upload', file, {headers: {['Authorization']: 'JWT ' + token}})
-      .subscribe(
-        (response) => {
-          if (response) {
-            fileuploadResponse.next(new fileActions.UploadfileResponse({success: true, filename: response}));
-          } else {
-            fileuploadResponse.next(new fileActions.UploadfileResponse({success: false, filename: ''}));
-          }
-        },
-        () => {
-          fileuploadResponse.next(new fileActions.UploadfileResponse({success: false, filename: ''}));
-        });
+    const uploadResponses = [];
+    files.forEach( file => {
+      uploadResponses.push({filename: file.name, done: false, saved_filename: ''});
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+      this.http.post<any>(endpoint + '/tosca/upload', formData, {headers: {['Authorization']: 'JWT ' + token}})
+        .subscribe(
+          (response) => {
+            if (response) {
+              const index = uploadResponses.findIndex(o => o.filename === file.name);
+              uploadResponses.splice(index, 1, {filename: file.name, done: true, saved_filename: response.file});
+              fileuploadResponse.next(new fileActions.UploadfilesResponse(uploadResponses));
+            } else {
+              const index = uploadResponses.findIndex(o => o.filename === file.name);
+              const saved_name = uploadResponses[index].saved_filename;
+              uploadResponses.splice(index, 1, {filename: file.name, done: false, saved_filename: saved_name});
+              fileuploadResponse.next(new fileActions.UploadfilesResponse(uploadResponses));
+            }
+          },
+          () => {
+            const index = uploadResponses.findIndex(o => o.filename === file.name);
+            const saved_name = uploadResponses[index].saved_filename;
+            uploadResponses.splice(index, 1, {filename: file.name, done: false, saved_filename: saved_name});
+            fileuploadResponse.next(new fileActions.UploadfilesResponse(uploadResponses));
+          },
+          () => {
+            if (this.all_done(uploadResponses)) {
+              fileuploadResponse.complete();
+            }
+          });
+    });
     return fileuploadResponse;
   }
 
-  uploadFileWithProgess(file: any, token: string): Observable<Action> {
+  uploadFileWithProgess(files: Set<File>, token: string): Observable<Action> {
     const endpoint = this.settings.getSettings().api_endpoint;
     const fileuploadSubject = new Subject<Action>();
-    this.http.post<any>(endpoint + '/tosca/upload', file, {headers: {['Authorization']: 'JWT ' + token}, reportProgress: true})
-      .subscribe(
-        (progress) => {
-          if (progress.type === HttpEventType.UploadProgress) {
-            const percentDone = Math.round(100 * progress.loaded / progress.total);
-            fileuploadSubject.next(new fileActions.UploadfileProgress({filename: file, percent_upload: percentDone}));
-          } else if (progress instanceof Response) {
-            fileuploadSubject.complete();
-          }
-        },
-        () => {
-          fileuploadSubject.next(new fileActions.UploadfileProgress({filename: file, percent_upload: 0}));
-        });
+    const progressResponses = [];
+    files.forEach( file => {
+      progressResponses.push({filename: file.name, percent_upload: 0, done: false, saved_filename: ''});
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+      this.http.post<any>(endpoint + '/tosca/upload', formData, {headers: {['Authorization']: 'JWT ' + token},
+        observe: 'events', reportProgress: true})
+        .subscribe(
+          (progress) => {
+            if (progress.type === HttpEventType.UploadProgress) {
+              const percentDone = Math.round(100 * progress.loaded / progress.total);
+              const index = progressResponses.findIndex(o => o.filename === file.name);
+              const saved_name = progressResponses[index].saved_filename;
+              progressResponses.splice(index, 1, {filename: file.name, percent_upload: percentDone,
+                done: false, saved_filename: saved_name});
+              fileuploadSubject.next(new fileActions.UploadfilesProgress(progressResponses));
+            } else if (progress instanceof HttpHeaderResponse) {
+              const index = progressResponses.findIndex(o => o.filename === file.name);
+              const saved_name = progressResponses[index].saved_filename;
+              progressResponses.splice(index, 1, {filename: file.name, percent_upload: 100, done: true, saved_filename: saved_name});
+              fileuploadSubject.next(new fileActions.UploadfilesProgress(progressResponses));
+            }
+          },
+          () => {
+            const index = progressResponses.findIndex(o => o.filename === file.name);
+            progressResponses.splice(index, 1, {filename: file.name, percent_upload: 0, done: true, saved_filename: ''});
+            fileuploadSubject.next(new fileActions.UploadfilesProgress(progressResponses));
+          },
+          () => {
+              if (this.all_done(progressResponses)) {
+                fileuploadSubject.complete();
+              }
+          });
+    });
     return fileuploadSubject;
   }
 
+  private all_done(uploadsList: any[]): boolean {
+    return uploadsList.reduce( (total, currentVal) => {
+      return total && currentVal;
+    }, true);
+  }
+
 }
+
+
 
 
 

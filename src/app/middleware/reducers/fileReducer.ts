@@ -1,52 +1,57 @@
-import { FILE_PROGRESS, FILE_RESPONSE } from '../actions/fileActions';
+import { UPLOADFILES_PROGRESS, UPLOADFILES_RESPONSE } from '../actions/fileActions';
 import * as fileActions from '../actions/fileActions';
 
 
-export interface  FileReducerState {
-  fileState: boolean;
-  file: string;
+export interface  FileUpload {
+  filename: string;
+  done: boolean;
+  saved_filename: string;
 }
 
 export interface FileProgress {
     filename: string;
     percent_upload: number;
+    done: boolean;
+    saved_filename: string;
+}
+
+export interface FileUploadState {
+  fileUploads: FileUpload[];
 }
 
 export interface  FileProgressState {
-  fileUploads: FileProgress;
+  fileProgresses: FileProgress[];
 }
 
-const initialState: FileReducerState = {
-  fileState: false,
-  file : ''
+
+const initialUploadState: FileUploadState = {
+  fileUploads: []
 };
 
 const initialProgressState:  FileProgressState = {
-  fileUploads: {
-    filename: '',
-    percent_upload: 0
-  }
+  fileProgresses: []
 };
 
-export function fileReducer( state: FileReducerState = initialState, action: fileActions.UploadfileResponse ): FileReducerState {
+export function fileUploadReducer( state: FileUploadState = initialUploadState,
+                             action: fileActions.UploadfilesResponse ): FileUploadState {
   switch (action.type) {
-    case FILE_RESPONSE:
+    case UPLOADFILES_RESPONSE:
       return {
         ...state,
-        fileState : action.payload.success ? action.payload.success : false,
-        file : action.payload.filename
+        fileUploads: action.payload
       };
   }
   return state;
 }
 
-export function fileProgressReducer( state: FileProgressState = initialProgressState, action: fileActions.UploadfileProgress ): FileProgressState {
+export function fileProgressReducer( state: FileProgressState = initialProgressState,
+                                     action: fileActions.UploadfilesProgress ): FileProgressState {
   switch (action.type) {
-    case FILE_PROGRESS:
-      const key = action.payload.filename;
+    case UPLOADFILES_PROGRESS:
       return {
         ...state,
-        // fileUploads: ...state.fileUploads = action.payload.percent_upload;
+        fileProgresses: action.payload
       };
   }
+  return state;
 }

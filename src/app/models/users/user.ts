@@ -10,11 +10,16 @@ export interface IUser {
   username: string;
   first_name: string;
   last_name: string;
-  description: string;
   email: string;
-  website: string;
   level: number;
   language: string;
+  account: IUserAccount;
+}
+
+export interface IUserAccount {
+  description: string;
+  website: string;
+  avatar: string;
 }
 
 export const empty_authuser: IAuthUser = {
@@ -24,13 +29,18 @@ export const empty_authuser: IAuthUser = {
   last_name:    ''
 };
 
+export const init_account: IUserAccount = {
+  description: 'Unknown authuser account',
+  website: '',
+  avatar: 'http://www.sejoule.com/media/avatars/generic-profile-avatar.jpg'
+};
+
 export const empty_user: IUser = {
   username: 'Anonymous',
   first_name: 'Anonymous',
   last_name: '',
-  description: 'Unknown authuser account',
   email: 'unknown@onecloud.com',
-  website: '',
   level: 1,
-  language: 'en'
-}
+  language: 'en',
+  account: init_account
+};

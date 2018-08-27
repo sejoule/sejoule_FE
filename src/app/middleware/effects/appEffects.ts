@@ -9,7 +9,6 @@ import { switchMap, take } from 'rxjs/internal/operators';
 import * as appActions from '../actions/appActions';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { Router } from '@angular/router';
-import { empty_authuser } from '../../models/users/user';
 
 
 

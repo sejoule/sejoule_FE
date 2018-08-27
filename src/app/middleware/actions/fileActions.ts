@@ -34,7 +34,6 @@ export class UploadfilesProgress implements Action {
   constructor(public payload: FileProgress[]) {}
 }
 
-
 export type FILE_ACTIONS =
   | UploadfilesAction
   | UploadyamlAction

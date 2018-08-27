@@ -11,7 +11,7 @@ export class SettingsService {
 
   constructor(private http: HttpClient) {  }
 
-  load() {
+  load(): Promise<any> {
     const jsonFile = 'assets/config/app-config.json';
     let textFile: string;
     return new Promise((resolve, reject) => {

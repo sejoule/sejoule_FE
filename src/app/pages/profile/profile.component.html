@@ -2,7 +2,9 @@
   <div fxFlex="80" fxFlex.sm="90" fxFlex.xs="100">
     <div class="portal-profile__header" fxLayout="row" >
       <div class="portal-profile__header-content" fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
-        <img src="assets/images/avatars/male/16.jpg" class="portal-profile__avatar" >
+        <a (click)="addFileDialog()" cursor>
+        <img src="{{account.avatar}}" class="portal-profile__avatar" ></a>
+        <input type="file" #file style="display: none" (change)="filesAdded()"/>
         <div class="portal-profile__header-text">
           <h1 i18n>{{profileForm.value.firstname}}</h1>
           <p i18n>Edit your personal information, change your password and set your privacy settings here.</p>

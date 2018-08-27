@@ -2,6 +2,7 @@ import { UPLOADFILES_PROGRESS, UPLOADFILES_RESPONSE } from '../actions/fileActio
 import * as fileActions from '../actions/fileActions';
 
 
+
 export interface  FileUpload {
   filename: string;
   done: boolean;

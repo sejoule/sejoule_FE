@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../middleware/reducers';
 import { pipe, Subscription } from 'rxjs';
-import { empty_user, IUser } from '../../models/users/user';
+import { empty_user, init_account, IUser, IUserAccount } from '../../models/users/user';
+import * as userAction from '../../middleware/actions/userActions';
 
 
 @Component({
@@ -13,19 +14,29 @@ import { empty_user, IUser } from '../../models/users/user';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
+  @ViewChild('file') fileElement: any;
   profileForm: FormGroup;
   passwordForm: FormGroup;
   notificationsForm: FormGroup;
   subscription: Subscription;
   user: IUser = empty_user;
+  account: IUserAccount = init_account;
+  avatar_to_upld: File;
 
   ngOnInit(): void {
     this.subscription = this.store.select('userReducer').subscribe(
       response => {
-        this.populateForm(response['user']);
+        this.user = response['user'];
       },
       error => console.log(error)
     );
+    this.subscription = this.store.select('accountReducer').subscribe(
+      response => {
+        this.account = response['account'];
+      },
+      error => console.log(error)
+    );
+    this.populateForm();
   }
 
   constructor(
@@ -35,14 +46,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     // private userStore: Store<UserState>
   ) {  }
 
-  populateForm(user: IUser): void {
+  populateForm(): void {
     this.profileForm = this.fb.group({
-      firstname: [user.first_name, Validators.required],
-      lastname: [user.last_name, Validators.required],
-      email: [user.email, Validators.required],
+      firstname: [this.user.first_name, Validators.required],
+      lastname: [this.user.last_name, Validators.required],
+      email: [this.user.email, Validators.required],
       location: 'Sitia, Crete, Greece',
-      website: user.website,
-      describe: user.description
+      website: this.user.account.website, // todo: remove user
+      describe: this.user.account.description,
     });
 
     this.passwordForm = this.fb.group({
@@ -59,6 +70,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
       showProfile: ['true', Validators.required],
       showBackups: ['', Validators.required],
     });
+  }
+
+  addFileDialog(): void {
+    this.fileElement.nativeElement.click();
+  }
+
+  filesAdded(): void {
+    this.avatar_to_upld = this.fileElement.nativeElement.files[0];
+    this.changeAvatar();
+  }
+
+  changeAvatar(): void {
+      this.store.dispatch(new userAction.UploadAvatarAction({
+      action: userAction.UPLOADAVATAR,
+      id: this.getUsrId,
+      avatar: this.avatar_to_upld,
+      token: this.getUsrToken
+    }));
   }
 
   get getUsrId(): number {

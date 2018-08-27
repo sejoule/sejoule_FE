@@ -16,52 +16,38 @@ export class UserService {
     private settings: SettingsService
   ) { }
 
-  public serverResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
-
   getUser(id: number, token: string): Observable<Action> {
     const endpoint = this.settings.getSettings().api_endpoint;
+    const serverResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
     this.http.get<any>(endpoint + '/users/' + id + '/', {params: {['token']: token}})
       .subscribe( (response: IUser) => {
         if (response) {
-          this.serverResponse.next(new userActions.GetUserResponse({success: true, user: response}) );
+          serverResponse.next(new userActions.GetUserResponse({success: true, user: response}) );
         }
       });
-    return this.serverResponse;
+    return serverResponse;
   }
 
-  // getAll() {
-  //   return this.http.get<IUser[]>('/api/users');
-  // }
-  //
-  // getById(id: number) {
-  //   return this.http.get('/api/users/' + id);
-  // }
-  //
-  // create(authuser: IUser) {
-  //   return this.http.post('/api/users', authuser);
-  // }
-  //
-  // update(authuser: IUser) {
-  //   return this.http.put('/api/users/' + authuser.id, authuser);
-  // }
-  //
-  // delete(id: number) {
-  //   return this.http.delete('/api/users/' + id);
-  // }
-  //
-  // alterUserState(changeType: any, state: any) {
-  //   changeType = changeType || GETT;
-  //   state = state || {};
-  //   switch (changeType) {
-  //     case GETT:
-  //       return this.userState;
-  //     case SETT:
-  //       this.store.dispatch({
-  //         type: state.action,
-  //         payload: state.payload
-  //       });
-  //       break;
-  //     default: return this.userState;
-  //   }
-  // }
+
+  uploadAvatar(id: number, avatar: File, token: string): Observable<Action> {
+    const endpoint = this.settings.getSettings().api_endpoint;
+    const uploadResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
+    const formData = new FormData();
+    formData.append('avatar', avatar, avatar.name);
+    this.http.put<any>(endpoint + '/avatar/' + id + '/', formData, {headers: {['Authorization']: 'JWT ' + token}})
+      .subscribe(
+        (response) => {
+          if (response) {
+            uploadResponse.next(new userActions.UploadAvatarResponse({account: response, success: true}));
+          } else {
+            uploadResponse.next(new userActions.UploadAvatarResponse({account: response, success: false}));
+          }
+        },
+        (error) => {
+          uploadResponse.next(new userActions.UploadAvatarResponse({account: null, success: false}));
+        }
+      );
+    return uploadResponse;
+  }
+
 }

@@ -16,6 +16,9 @@
   @media (max-width: 600px) {
     padding-top: 24px;
   }
+  a {
+    cursor: pointer;
+  }
 }
 
 .portal-profile__avatar {
@@ -58,7 +61,7 @@
 // Demo animations
 @keyframes portal-profile {
   0% {
-    transform: translateY(80px);
+    transform: translateY(10px);
     opacity: 0;
   }
   100% {

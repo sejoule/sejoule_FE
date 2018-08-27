@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../middleware/reducers';
 import * as appAction from '../../../middleware/actions/appActions';
-import { empty_authuser, IAuthUser } from '../../../models/users/user';
+import { empty_authuser, empty_user, IAuthUser, init_account, IUser, IUserAccount } from '../../../models/users/user';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import * as userAction from '../../../middleware/actions/userActions';
@@ -17,7 +17,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     {
       title: 'My Profile',
       icon: 'account_circle',
-      click: () => { this.getUserProfile(); }
+      click: () => {this.showProfilePage();}
     },
     {
       title: 'Activity',
@@ -46,12 +46,14 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     }
   ];
   authuser: IAuthUser = empty_authuser;
+  account: IUserAccount = init_account;
   subscription: Subscription;
   id: number;
   token: string;
 
   constructor(
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private router: Router
   ) { }
 
   // subscribe the the reducer to get the changes to the application state
@@ -61,6 +63,8 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     );
     this.store.select('appReducer').subscribe(event => this.id = event.authuser['id'] );
     this.store.select('appReducer').subscribe(event => this.token = event['token'] );
+    this.getUserProfile();
+    this.store.select('accountReducer').subscribe(event => this.account = event.account );
   }
 
   getUserProfile(): void {
@@ -71,6 +75,10 @@ export class UserMenuComponent implements OnInit, OnDestroy {
           token: this.token,
         }
       ));
+  }
+
+  showProfilePage(): void {
+    this.router.navigate(['/pages/profile']);
   }
 
   logout(): void {

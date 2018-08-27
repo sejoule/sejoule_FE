@@ -37,7 +37,7 @@ $app-typography: mat-typography-config(
 @include mat-core($app-typography);
 
 $app-primary: mat-palette($mat-light-blue);
-$app-accent: mat-palette($mat-pink, A200, A100, A400);
+$app-accent: mat-palette($mat-blue-grey, A200, A100, A400);
 $app-warn: mat-palette($mat-red);
 
 $app-theme: portal-light-theme($app-primary, $app-accent, $app-warn);
@@ -47,7 +47,7 @@ $app-theme: portal-light-theme($app-primary, $app-accent, $app-warn);
 @include portal-theme($app-theme, $app-typography);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$sidenav-theme: portal-dark-theme($app-primary, $app-accent, $app-warn);
+$sidenav-theme: portal-light-theme($app-primary, $app-accent, $app-warn);
 .portal-sidenav-theme {
   @include angular-material-theme($sidenav-theme);
   @include portal-theme($sidenav-theme, $app-typography);

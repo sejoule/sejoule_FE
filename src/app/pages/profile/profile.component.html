@@ -3,7 +3,7 @@
     <div class="portal-profile__header" fxLayout="row" >
       <div class="portal-profile__header-content" fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
         <a (click)="addFileDialog()" cursor>
-        <img src="{{account.avatar}}" class="portal-profile__avatar" ></a>
+        <img src="{{user.account.avatar}}" class="portal-profile__avatar" ></a>
         <input type="file" #file style="display: none" (change)="filesAdded()"/>
         <div class="portal-profile__header-text">
           <h1 i18n>{{profileForm.value.firstname}}</h1>
@@ -156,7 +156,7 @@
           <button mat-raised-button i18n
           type="submit"
           color="accent"
-          (click)="showSnackbar()"
+          (click)="showAlert()"
           [disabled]="!profileForm.valid">
           Update Settings
           </button>

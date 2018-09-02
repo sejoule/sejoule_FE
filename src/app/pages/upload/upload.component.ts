@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../middleware/reducers';
 import * as fileAction from '../../middleware/actions/fileActions';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {empty_authuser , IAuthUser} from '../../models/users/user';
 
 
 @Component({
@@ -15,8 +16,8 @@ export class UploadComponent implements OnInit {
   @ViewChild('file') fileElement: any;
   files: Set<File> = new Set();
   progress: any = {};
-  uploads: any = {};
   yamlForm: FormGroup;
+  auth_user: IAuthUser = empty_authuser;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -28,23 +29,12 @@ export class UploadComponent implements OnInit {
       yaml: '',
     });
 
-    // this.store.select('fileUploadReducer').subscribe(
-    //   event => {
-    //     event.fileUploads.forEach( (fileUploadEvent) => {
-    //          if (fileUploadEvent.done === true) {
-    //           this.files.forEach( (file) => {
-    //             if (file.name === fileUploadEvent.filename) {
-    //               this.files.delete(file);
-    //             }
-    //           });
-    //         }
-    //       }
-    //     );
-    //   },
-    //   error => {
-    //     // todo do something on error
-    //   }
-    // );
+    this.store.select('loginReducer').subscribe(
+      response => {
+        this.auth_user = response['authuser'];
+      },
+      error => console.log(error)
+    );
 
     this.store.select('fileProgressReducer').subscribe(
       event => {
@@ -73,12 +63,11 @@ export class UploadComponent implements OnInit {
   }
 
   uploadYml(): void {
-    // TODO: need to change this to POST the body as text to the url http://kena.sejoule.com/tosca/service_templates/
     const yaml_to_upload: string = this.yamlForm.controls.yaml.value;
     this.store.dispatch(new fileAction.UploadyamlAction({
       action: fileAction.UPLOADYAML,
       yaml: yaml_to_upload,
-      token: this.getUsrToken
+      token: this.auth_user.token
     }));
   }
 
@@ -86,17 +75,9 @@ export class UploadComponent implements OnInit {
     this.store.dispatch(new fileAction.UploadfilesAction({
       action: fileAction.UPLOADFILES,
       files: this.files,
-      token: this.getUsrToken,
+      token: this.auth_user.token,
       with_progress: with_progress
     }));
-  }
-
-  get getUsrToken(): string {
-    let token = '';
-    this.store.select('appReducer').subscribe(
-      event => token = event['token']
-    );
-    return token;
   }
 
 }

@@ -1,12 +1,12 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import * as appActions from '../../middleware/actions/appActions';
+import * as userActions from '../../middleware/actions/userActions';
 import { ReplaySubject } from 'rxjs';
 import { empty_authuser } from '../../models/users/user';
 import { SettingsService } from '../config/settings.service';
+import { LOGGED_IN, LOGGED_OUT } from '../../middleware/actions/userActions';
 
 @Injectable()
 export class AuthenticationService {
@@ -16,40 +16,64 @@ export class AuthenticationService {
     private settings: SettingsService
   ) {  }
 
-  public logInOutResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
-
   loginUser(username: string, password: string): Observable<Action> {
     const endpoint = this.settings.getSettings().api_endpoint;
+    const logInResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
     this.http.post<any>(endpoint + '/api-token-user_auth/', {username: username, password: password})
       .subscribe(
         (response) => {
           if (response.token) {
-            this.logInOutResponse.next(new appActions.LoginResponse({success: true, authuser: response.user, token: response.token}));
+            logInResponse.next(
+              new userActions.LoginResponse({
+                login_state: LOGGED_IN, success: true, authuser: {
+                  id: response.user.id,
+                  username: response.user.username,
+                  token: response.token
+                }
+              })
+            );
           } else {
-            this.logInOutResponse.next(new appActions.LoginResponse({success: false, authuser: empty_authuser, token: ''}));
+            logInResponse.next(
+              new userActions.LoginResponse({login_state: LOGGED_IN, success: false, authuser: empty_authuser})
+            );
           }
         },
         () => {
-          this.logInOutResponse.next(new appActions.LoginResponse({success: false, authuser: empty_authuser, token: ''}));
+          logInResponse.next(
+            new userActions.LoginResponse({login_state: LOGGED_IN, success: false, authuser: empty_authuser})
+          );
         });
-    return this.logInOutResponse;
+    return logInResponse;
   }
 
-  logOutUser(username: string): Observable<Action> {
+  logOutUser(id: number, token: string): Observable<Action> {
     const endpoint = this.settings.getSettings().api_endpoint;
-    this.http.post<any>(endpoint + '/api/authenticate/logout', {username: username})
+    const logOutResponse: ReplaySubject<Action> = new ReplaySubject<Action>(1);
+    this.http.post<any>(endpoint + '/api-user_auth/logout', {'id': id }, { headers: {['Authorization']: 'JWT ' + token}})
       .subscribe(
         (response) => {
           if (response.username) {
-            this.logInOutResponse.next(new appActions.LogOutResponse({success: true, authuser: response.username}));
+            logOutResponse.next(
+              new userActions.LogOutResponse({
+                login_state: LOGGED_OUT, success: true, authuser: {
+                  id: -1,
+                  username: response.username,
+                  token: ''
+                }
+              })
+            );
           } else {
-            this.logInOutResponse.next(new appActions.LogOutResponse({success: false, authuser: ''}));
+            logOutResponse.next(
+              new userActions.LogOutResponse({login_state: LOGGED_OUT, success: false, authuser: empty_authuser})
+            );
           }
         },
-        () => {
-          this.logInOutResponse.next(new appActions.LogOutResponse({success: false, authuser: ''}));
+        (error) => {
+          logOutResponse.next(
+            new userActions.LogOutResponse({login_state: LOGGED_OUT, success: false, authuser: empty_authuser})
+          );
         });
-    return this.logInOutResponse;
+    return logOutResponse;
   }
 
 }

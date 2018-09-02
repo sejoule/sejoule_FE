@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ReplaySubject } from 'rxjs';
 import { Action } from '@ngrx/store';
 import { SettingsService } from '../config/settings.service';
-import { IUser } from '../../models/users/user';
+import {empty_user , IUser} from '../../models/users/user';
 import * as userActions from '../../middleware/actions/userActions';
 
 
@@ -38,13 +38,13 @@ export class UserService {
       .subscribe(
         (response) => {
           if (response) {
-            uploadResponse.next(new userActions.UploadAvatarResponse({account: response, success: true}));
+            uploadResponse.next(new userActions.GetUserResponse({success: true, user: response}));
           } else {
-            uploadResponse.next(new userActions.UploadAvatarResponse({account: response, success: false}));
+            uploadResponse.next(new userActions.GetUserResponse({success: false, user: response}));
           }
         },
         (error) => {
-          uploadResponse.next(new userActions.UploadAvatarResponse({account: null, success: false}));
+          uploadResponse.next(new userActions.GetUserResponse({success: true, user: empty_user}));
         }
       );
     return uploadResponse;

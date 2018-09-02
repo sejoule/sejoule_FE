@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SettingsService } from '../../services/config/settings.service';
 import { AlertService } from '../../services/alerts/alert.service';
-import * as appAction from '../../middleware/actions/appActions';
+import * as userAction from '../../middleware/actions/userActions';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../middleware/reducers';
 
@@ -42,12 +42,11 @@ export class LoginComponent implements OnInit {
 
 
   login(): void {
-
-    this.store.dispatch( new appAction.LoginAction({
-          action: appAction.LOGIN,
+    this.store.dispatch( new userAction.LoginAction({
           username: this.f.username.value,
           password: this.f.password.value
-        }));
+        })
+    );
   }
 
   register(): void {

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../middleware/reducers';
 import { pipe, Subscription } from 'rxjs';
-import { empty_user, init_account, IUser, IUserAccount } from '../../models/users/user';
+import {empty_authuser , empty_user , IAuthUser , init_account , IUser , IUserAccount} from '../../models/users/user';
 import * as userAction from '../../middleware/actions/userActions';
 
 
@@ -20,7 +20,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   notificationsForm: FormGroup;
   subscription: Subscription;
   user: IUser = empty_user;
-  account: IUserAccount = init_account;
+  auth_user: IAuthUser = empty_authuser;
   avatar_to_upld: File;
 
   ngOnInit(): void {
@@ -30,9 +30,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       },
       error => console.log(error)
     );
-    this.subscription = this.store.select('accountReducer').subscribe(
+    this.subscription = this.store.select('loginReducer').subscribe(
       response => {
-        this.account = response['account'];
+        this.auth_user = response['authuser'];
       },
       error => console.log(error)
     );
@@ -43,7 +43,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private store: Store<AppState>,
-    // private userStore: Store<UserState>
   ) {  }
 
   populateForm(): void {
@@ -84,29 +83,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
   changeAvatar(): void {
       this.store.dispatch(new userAction.UploadAvatarAction({
       action: userAction.UPLOADAVATAR,
-      id: this.getUsrId,
+      id: this.auth_user.id,
       avatar: this.avatar_to_upld,
-      token: this.getUsrToken
+      token: this.auth_user.token
     }));
   }
 
-  get getUsrId(): number {
-    let id = -1;
-    this.store.select('appReducer').subscribe(
-      event => id = event.authuser['id']
-    );
-    return id;
-  }
-
-  get getUsrToken(): string {
-    let token = '';
-    this.store.select('appReducer').subscribe(
-      event => token = event['token']
-    );
-    return token;
-  }
-
-  showSnackbar(): void {
+  showAlert(): void {
     this.snackBar.open('Settings Updated', '', {
       duration: 3000,
     });

@@ -1,10 +1,10 @@
 <a class="portal-user-menu-button" mat-button [mat-menu-trigger-for]="userDetailsMenu">
-  <img class="portal-user-menu-button__avatar" src="{{account.avatar}}" alt="Brian">
+  <img class="portal-user-menu-button__avatar" src="{{user.account.avatar}}" alt="Brian">
   <span class="portal-user-menu-button__username">{{ authuser.username }}</span>
 </a>
 <mat-menu #userDetailsMenu="matMenu" classList="portal-menu-no-padding">
   <div class="portal-user-menu-header" fxLayout="row" fxLayoutAlign=" center">
-    <img class="portal-user-menu-header__avatar" src="{{account.avatar}}" alt="{{ authuser.username }}"/>
+    <img class="portal-user-menu-header__avatar" src="{{user.account.avatar}}" alt="{{ authuser.username }}"/>
     <div class="portal-user-menu-header__details" fxLayout="column" fxLayoutAlign="center start">
       <h2>{{ authuser.username }}</h2>
       <h3>Web Developer</h3>

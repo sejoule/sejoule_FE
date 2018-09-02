@@ -2,8 +2,7 @@
 export interface IAuthUser {
   id:          number;
   username:    string;
-  first_name:   string;
-  last_name:    string;
+  token:       string;
 }
 
 export interface IUser {
@@ -23,10 +22,9 @@ export interface IUserAccount {
 }
 
 export const empty_authuser: IAuthUser = {
-  id:          -1,
-  username:    'Anonymous',
-  first_name:   'Anonymous',
-  last_name:    ''
+  id:           -1,
+  username:     'Anonymous',
+  token:        ''
 };
 
 export const init_account: IUserAccount = {

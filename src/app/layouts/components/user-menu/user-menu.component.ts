@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../middleware/reducers';
-import * as appAction from '../../../middleware/actions/appActions';
 import { empty_authuser, empty_user, IAuthUser, init_account, IUser, IUserAccount } from '../../../models/users/user';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -17,7 +16,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     {
       title: 'My Profile',
       icon: 'account_circle',
-      click: () => {this.showProfilePage();}
+      click: () => { this.showProfilePage(); }
     },
     {
       title: 'Activity',
@@ -46,10 +45,8 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     }
   ];
   authuser: IAuthUser = empty_authuser;
-  account: IUserAccount = init_account;
+  user: IUser = empty_user;
   subscription: Subscription;
-  id: number;
-  token: string;
 
   constructor(
     private store: Store<AppState>,
@@ -58,23 +55,12 @@ export class UserMenuComponent implements OnInit, OnDestroy {
 
   // subscribe the the reducer to get the changes to the application state
   ngOnInit(): void {
-    this.subscription = this.store.select('appReducer').subscribe(
+    this.subscription = this.store.select('loginReducer').subscribe(
       (event) => this.authuser = event['authuser']
     );
-    this.store.select('appReducer').subscribe(event => this.id = event.authuser['id'] );
-    this.store.select('appReducer').subscribe(event => this.token = event['token'] );
-    this.getUserProfile();
-    this.store.select('accountReducer').subscribe(event => this.account = event.account );
-  }
-
-  getUserProfile(): void {
-    this.store.dispatch(
-      new userAction.GetUserProfileAction({
-          action: userAction.GETUSERPROFILE,
-          id: this.id,
-          token: this.token,
-        }
-      ));
+    this.store.select('userReducer').subscribe(
+      event => this.user = event.user
+    );
   }
 
   showProfilePage(): void {
@@ -82,12 +68,9 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    let user: IAuthUser;
-    this.store.select('appReducer').subscribe(
-      event => { user = event['authuser']; });
-    this.store.dispatch( new appAction.LogoutAction({
-      action: appAction.LOGOUT,
-      username: user.username
+    this.store.dispatch( new userAction.LogoutAction({
+      id: this.authuser.id,
+      token: this.authuser.token
     }));
   }
 
